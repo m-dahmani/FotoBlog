@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<!--{% load static %}-->
+<html>
+    <head>
+        <title>{% block title %}FotoBlog{% endblock title %}</title>
+<!--        <link href="{% static 'listings/style.css' %}" rel="stylesheet"/>-->
+    </head>
+    <body>
+        <h1>FotoBlog</h1>
+        {% block content %}{% endblock %}
+        {% if user.is_authenticated %}  <!--check user is connected-->
+            <p>You are logged in as {{ request.user }}. <a href="{% url 'logout' %}">Sign out</a></p>
+        {% endif %}
+    </body>
+</html>
+

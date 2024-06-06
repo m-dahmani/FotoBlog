@@ -1,3 +1,7 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-# Create your views here.
+
+@login_required  # Restrict access to the home page
+def home(request):
+    return render(request, 'blog/home.html')

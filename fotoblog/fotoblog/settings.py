@@ -25,7 +25,8 @@ SECRET_KEY = "django-insecure-6!bqi-k-o@(i7(w^*eq1dlfect*na#ivzl0==wf-9%on4&%*q2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '192.168.150.128']
 
 
 # Application definition
@@ -56,7 +57,9 @@ ROOT_URLCONF = "fotoblog.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            BASE_DIR.joinpath('templates'),  # <--- Add this line  that will be used for the entire project
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -124,3 +127,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# instead of setting up an SMTP server use Django's mock mail server to test our form
+# and will display all emails sent by Django in the terminal
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# Configure Django to use a custom User model
+AUTH_USER_MODEL = 'authentication.User'
+
+# @login_required  # Restrict access to the home page
+# which page==login to redirect to if the user is not logged in.
+LOGIN_URL = 'login'
