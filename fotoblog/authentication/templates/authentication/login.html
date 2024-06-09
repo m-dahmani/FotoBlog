@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <p>{{ message }}</p>
+<!--    <p>{{ message }}</p>--> <!--replace by redirect('home') -->
     <form method="post">
         {{ form.as_p }}
         {% csrf_token %}
