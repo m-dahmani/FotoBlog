@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
 from django.urls import path
 # from authentication import views
 import authentication.views
@@ -22,7 +23,24 @@ import blog.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', authentication.views.login_page, name='login'),
-    path('logout/', authentication.views.logout_user, name='logout'),
-    path('home/', blog.views.home, name='home'),
+    # path('', authentication.views.login_page, name='login'), # the function-based connection view
+    # path('', authentication.views.LoginPageView.as_view(), name='login'), # To be a class-based view
+    path('', LoginView.as_view(
+        template_name='authentication/login.html',
+        redirect_authenticated_user=True),
+         name='login'), # Implement login with generic views (class LoginView)
+    # path('home/', blog.views.home, name='home'), # the function-based connection view
+    path('home/', blog.views.HomePageView.as_view(), name='home'), # To be a class-based view
+    # path('logout/', authentication.views.logout_user, name='logout'), # the function-based connection view
+    path('logout/', LogoutView.as_view(
+        template_name='authentication/login.html'),
+         name='logout'),  # Implement login with generic views (class LogoutView)
+
+    path("password_change/", PasswordChangeView.as_view(
+        template_name='authentication/password_change_form.html'),
+        name="password_change"), # Implement login with generic views (class LoginView)
+    path("password_change/done/", PasswordChangeDoneView.as_view(
+        template_name='authentication/password_change_done.html'),
+         name="password_change_done",), # Implement login with generic views (class LoginView)
+
 ]

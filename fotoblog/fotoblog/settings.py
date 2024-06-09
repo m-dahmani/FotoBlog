@@ -135,6 +135,12 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # Configure Django to use a custom User model
 AUTH_USER_MODEL = 'authentication.User'
 
-# @login_required  # Restrict access to the home page
+# @login_required(login_url='')  # Restrict access to the home page
 # which page==login to redirect to if the user is not logged in.
 LOGIN_URL = 'login'
+
+
+# Implement login with generic views (class LoginView & LogoutView) & all view logic is already handled.
+LOGIN_REDIRECT_URL = 'home'  # Redirect to the home page
+LOGOUT_REDIRECT_URL = LOGIN_URL  # Redirect to the connexion page
+

@@ -10,7 +10,7 @@
         {% block content %}{% endblock %}
         {% if user.is_authenticated %}  <!--check user is connected-->
             <p>You are logged in as {{ request.user }}. <a href="{% url 'logout' %}">Sign out</a></p>
+            <p>Want to <a href="{% url 'password_change' %}">change your password?</a></p>
         {% endif %}
     </body>
 </html>
-
