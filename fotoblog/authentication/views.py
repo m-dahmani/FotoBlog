@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-from .forms import LoginForm
+from .forms import LoginForm, SignupForm
 from django.views.generic import View
 
 
@@ -70,3 +71,23 @@ def login_page(request):
 def logout_user(request):
     logout(request)
     return redirect('login')  # Redirect to connexion page
+
+
+def signup_page(request):
+
+    # Take a look at « request.method » and « request.POST »
+    print('La méthode de requête est : ', request.method)
+    print('Les données POST sont : ', request.POST)
+    print('Les données login : ', request.user)
+
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # auto-login user
+            login(request, user)
+            return redirect(settings.LOGIN_REDIRECT_URL)
+    else:
+        form = SignupForm()
+    context = {'form': form}
+    return render(request, 'authentication/signup.html', context=context)
