@@ -1,3 +1,21 @@
+from django.conf import settings
 from django.db import models
 
-# Create your models here.
+
+class Photo(models.Model):
+    image = models.ImageField()  # The Photo template contains an image stored in the ImageField.
+    caption = models.CharField(max_length=128, blank=True)
+    # Adds an uploader field as a foreign key to the user.
+    # Use settings.AUTH_USER_MODEL to reference the custom user model if necessary.
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+
+class Blog(models.Model):
+    # blog posts can optionally be linked to a photo using the ForeignKey relationship
+    photo = models.ForeignKey(Photo, null=True, on_delete=models.SET_NULL, blank=True)
+    title = models.CharField(max_length=128)
+    content = models.CharField(max_length=5000)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    starred = models.BooleanField(default=False)

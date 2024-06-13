@@ -91,9 +91,10 @@ DATABASES = {
 # Configure settings to use the custom validator
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',        'OPTIONS': {
-                    'min_length': 4,
-                }
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 4,
+        }
     },
     {
         'NAME': 'authentication.validators.ContainsLetterValidator',
@@ -107,8 +108,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-# LANGUAGE_CODE = "en-us"
-LANGUAGE_CODE = "fr-fr"
+LANGUAGE_CODE = "en-us"
+# LANGUAGE_CODE = "fr-fr"
 
 TIME_ZONE = "UTC"
 
@@ -120,7 +121,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR.joinpath('static/')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -143,3 +145,8 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'  # Redirect to the home page
 LOGOUT_REDIRECT_URL = LOGIN_URL  # Redirect to the connexion page
 
+
+# to define where the media files will be stored and under what URL they will be accessible.
+MEDIA_URL = '/media/'  # the URL from which Django will host media uploaded by users
+# MEDIA_ROOT = 'media/'
+MEDIA_ROOT = BASE_DIR.joinpath('media/')  # the local directory in which Django should store uploaded images

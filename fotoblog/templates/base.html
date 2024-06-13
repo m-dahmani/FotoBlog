@@ -1,16 +1,32 @@
 <!DOCTYPE html>
-<!--{% load static %}-->
+{% load static %}
 <html>
     <head>
         <title>{% block title %}FotoBlog{% endblock title %}</title>
-<!--        <link href="{% static 'listings/style.css' %}" rel="stylesheet"/>-->
+        <link href="{% static 'app.css' %}" rel="stylesheet"/>
     </head>
     <body>
+    <div class="sidebar">
         <h1>FotoBlog</h1>
-        {% block content %}{% endblock %}
+
         {% if user.is_authenticated %}  <!--check user is connected-->
-            <p>You are logged in as {{ request.user }}. <a href="{% url 'logout' %}">Sign out</a></p>
-            <p>Want to <a href="{% url 'password_change' %}">change your password?</a></p>
+            <p>Hey {{ user }}!</p>
+            {% if user.profile_photo %}
+                <img class="avatar" src={{ user.profile_photo.url }}>
+            {% else %}
+                <img class="avatar" src="{% static 'images/default_profile.png'%}">
+            {% endif %}
+            <p><a href="{% url 'home' %}">Home</a></p>
+            <p><a href="{% url 'photo-upload' %}">Upload a photo</a></p>
+            <p><a href="{% url 'profile-upload' %}">Change Profile Photo</a></p>
+            <p><a href="{% url 'password_change' %}">Change password</a></p>
+<!--            <p>You are logged in as {{ request.user }}. <a href="{% url 'logout' %}">Sign out</a></p>-->
+            <p><a href="{% url 'logout' %}">Sign out</a></p>
         {% endif %}
+    </div>
+
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
     </body>
 </html>

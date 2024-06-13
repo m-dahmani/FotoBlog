@@ -1,4 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-    <p>Hello, {{ user.username }}! You are connected.</p>
+<!--    <h1>Hello, {{ user.username }}! You are connected.</h1>-->
+<!--    <h1>Hello, {{ user.username }} !</h1>-->
+    <h2>Photos</h2>
+    <div class="grid-container">
+        {% for photo in photos %}
+            <div class="post">
+                <img src="{{ photo.image.url }}">
+                <p>{{ photo.caption }}</p>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock content %}

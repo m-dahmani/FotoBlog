@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .forms import LoginForm, SignupForm
+from .forms import LoginForm, SignupForm, UploadProfilePhotoForm
 from django.views.generic import View
 
 
@@ -73,6 +74,7 @@ def logout_user(request):
     return redirect('login')  # Redirect to connexion page
 
 
+# the function-based connection view
 def signup_page(request):
 
     # Take a look at « request.method » and « request.POST »
@@ -91,3 +93,44 @@ def signup_page(request):
         form = SignupForm()
     context = {'form': form}
     return render(request, 'authentication/signup.html', context=context)
+
+
+# class SignupView(View):
+#     """Refactor the Signup view to be a class-based view"""
+#     form_class = SignupForm
+#     template = 'authentication/signup.html'
+#
+#     def get(self, request):
+#         form = self.form_class()
+#         return render(request, self.template, {'form': form})
+#
+#     def post(self, request):
+#         form = self.form_class(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             login(request, user)
+#           #  return redirect('home')
+#             return redirect(settings.LOGIN_REDIRECT_URL)
+#         return render(request, self.template, {'form': form})
+
+
+@login_required  # Restrict access to the user connected
+def upload_profile_photo(request):
+    # Take a look at « request.method » and « request.POST »
+    print('La méthode de requête est : ', request.method)
+    print('Les données POST sont : ', request.POST)
+    print('Les données login : ', request.user)
+    print('Les données Media : ', request.FILES)
+
+    if request.method == 'POST':
+        # pass data & images(FILES) & we pre-fill the form with an existing instance=request.user to form
+        form = UploadProfilePhotoForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()  # save the photo in the DB
+            return redirect('home')
+
+    else:
+        # we pre-fill the form with an existing instance=request.user here if request.GET
+        form = UploadProfilePhotoForm(instance=request.user)
+
+    return render(request, 'authentication/photo_profil_upload.html', context={'form': form})
