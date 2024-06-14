@@ -41,6 +41,10 @@ urlpatterns = [
     path('', authentication.views.login_page, name='login'),  # the function-based connection view
     path('home/', blog.views.home, name='home'),
     path('photo/upload/', blog.views.photo_upload, name='photo-upload'),
+    path('blog/add/', blog.views.blog_and_photo_upload, name='blog-create'),
+    path('blog/<int:blog_id>/', blog.views.blog_view_detail, name='blog-view-detail'),
+
+
     path('profile/upload/', authentication.views.upload_profile_photo, name='profile-upload'),
     path('logout/', authentication.views.logout_user, name='logout'),
     path('signup/', authentication.views.signup_page, name='signup'),
@@ -60,5 +64,3 @@ urlpatterns = [
 # or to another host a third-party service
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-

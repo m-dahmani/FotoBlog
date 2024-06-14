@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Write a post</h2>
+    <form method="post" enctype="multipart/form-data"> <!--both forms are under the same <form> tag -->
+        {{ blog_form.as_p }}
+        {{ photo_form.as_p }}
+        {% csrf_token %}
+        <button type="submit" >Post</button> <!--clicking the button will send POST data from both forms at the same time -->
+    </form>
+{% endblock content %}
+
+
