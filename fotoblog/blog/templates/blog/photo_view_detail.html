@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>{{ photo.caption }}</h2>
+    <img src="{{ photo.image.url }}">
+<!--<a href="{% url 'delete-photo' photo.id %}">[Delete a photo]</a>-->
+{% endblock content %}
+

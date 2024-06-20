@@ -4,5 +4,8 @@
     <img src="{{ blog.photo.image.url }}">
     <p>{{ blog.photo.caption }}</p>
     <p>{{ blog.content }}</p>
+
+<a href="{% url 'update-delete-blog' blog.id %}">[Edit | Delete a blog post]</a>
+
 {% endblock content %}
 

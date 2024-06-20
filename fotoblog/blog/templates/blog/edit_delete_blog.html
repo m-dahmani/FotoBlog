@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Edit the blog post</h2>
+
+    <form method="post">
+        {{ edit_form.as_p }}
+        {% csrf_token %}
+        <button type="submit" >Save</button>
+    </form>
+
+    <hr>
+
+    <h3>Delete the blog post ?</h3>
+    <p>Are you sure you want to delete the blog post : {{ blog.title }}?/p>
+
+    <form method="post">
+        {{ delete_form }}
+        {% csrf_token %}
+        <input type="submit" name="confirm" value="Yes, I’m sure">
+        <input class="cancel-link" type="submit" name="cancel" value="No, take me back">
+    </form>
+
+{% endblock content %}
+

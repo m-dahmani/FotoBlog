@@ -41,9 +41,15 @@ urlpatterns = [
     path('', authentication.views.login_page, name='login'),  # the function-based connection view
     path('home/', blog.views.home, name='home'),
     path('photo/upload/', blog.views.photo_upload, name='photo-upload'),
+    path('photo/upload-multiple/', blog.views.create_multiple_photos, name='photo-upload-multiple'),
+
+    # # just to delete photos via home interface
+    # path('photo/<int:photo_id>/', blog.views.photo_view_detail, name='photo-view-detail'),
+    # path('photo/<int:photo_id>/delete/', blog.views.delete_photo, name='delete-photo'),
+    # ###################################
     path('blog/add/', blog.views.blog_and_photo_upload, name='blog-create'),
     path('blog/<int:blog_id>/', blog.views.blog_view_detail, name='blog-view-detail'),
-
+    path('blog/<int:blog_id>/update|delete', blog.views.edit_delete_blog, name='update-delete-blog'),
 
     path('profile/upload/', authentication.views.upload_profile_photo, name='profile-upload'),
     path('logout/', authentication.views.logout_user, name='logout'),

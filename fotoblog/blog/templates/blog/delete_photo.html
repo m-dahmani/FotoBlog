@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Delete a photo</h1>
+<p>Are you sure you want to delete the photo : {{ photo.caption }}?
+    All of the following related items will be deleted !/p>
+
+
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="submit" name="confirm" value="Yes, I’m sure">
+    <input class="cancel-link" type="submit" name="cancel" value="No, take me back">
+</form>
+{% endblock %}

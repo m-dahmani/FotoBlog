@@ -1,8 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms import formset_factory
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PhotoForm, BlogForm
+from .forms import PhotoForm, BlogForm, DeleteBlogForm
 from .models import Photo, Blog
 
 
@@ -90,3 +91,121 @@ def blog_view_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
     context = {'blog': blog}
     return render(request, 'blog/blog_view_detail.html', context)
+
+
+@login_required
+def edit_delete_blog(request, blog_id):
+    blog = get_object_or_404(Blog, id=blog_id)
+
+    # Take a look at « request.method » and « request.POST »
+    print('La méthode de requête est : ', request.method)
+    print('Les données POST sont : ', request.POST)
+    print('Les données login : ', request.user)
+    print('Les données Media : ', request.FILES)
+
+    if request.method == 'POST':
+        # check which form is sent by checking the presence of this field (edit_blog) in the POST data
+        if 'edit_blog' in request.POST:
+            # we pre-fill the form with an existing blog the instance already created and fill it with the POST data
+            edit_form = BlogForm(request.POST, instance=blog)
+            if edit_form.is_valid():
+                # update the instance of the object already created “Blog” and save it in the database
+                edit_form.save()
+                # return redirect('home')
+                # redirect to the detail page of the blog we just update
+                return redirect('blog-view-detail', blog.id)
+
+        # check which form is sent by checking the presence of this field (delete_blog) in the POST data
+        if 'delete_blog' in request.POST:
+
+            if 'confirm' in request.POST:
+                # Create an instance of our form and fill it with the POST data
+                delete_form = DeleteBlogForm(request.POST)  # ??? no need
+
+                if delete_form.is_valid():  # ??? no need
+                    # delete the blog object in the database
+                    blog.delete()
+                    # redirect to the list-page of the blog we just verified if existing it
+                    return redirect('home')
+
+            elif 'cancel' in request.POST:
+                # redirect to the list-page of the blog we just verified if existing it
+                return redirect('home')
+    else:
+        # we pre-fill the form with an existing blog the instance already created
+        # this must be a GET request, so open with the instance of the object already created
+        edit_form = BlogForm(instance=blog)
+        # this must be a GET request, so create an empty form
+        delete_form = DeleteBlogForm()  # Add a new DeleteBlogForm empty here if request.GET
+
+    context = {
+        'edit_form': edit_form,
+        'delete_form': delete_form,
+    }
+    return render(request, 'blog/edit_delete_blog.html', context)
+
+
+# # just to delete photos via home interface
+# @login_required
+# def delete_photo(request, photo_id):
+#     photo = get_object_or_404(Photo, id=photo_id)
+#
+#     # Take a look at « request.method » and « request.POST »
+#     print('La méthode de requête est : ', request.method)
+#     print('Les données POST sont : ', request.POST)
+#     print('Les données login : ', request.user)
+#     print('Les données Media : ', request.FILES)
+#
+#     if request.method == 'POST':
+#         if 'confirm' in request.POST:
+#             # delete the photo object in the database
+#             photo.delete()
+#             # redirect to the list-page of the blog we just verified if existing it
+#             return redirect('home')
+#
+#         elif 'cancel' in request.POST:
+#             # redirect to the list-page of the photo we just verified if existing it
+#             return redirect('home')
+#
+#     context = {'photo': photo}
+#     return render(request, 'blog/delete_photo.html', context)
+#
+#
+# @login_required
+# def photo_view_detail(request, photo_id):
+#     # to recover the blog(obj) and handle the case where the object does not exist.
+#     photo = get_object_or_404(Photo, id=photo_id)
+#     context = {'photo': photo}
+#     return render(request, 'blog/photo_view_detail.html', context)
+# ####################################################################
+
+
+@login_required
+def create_multiple_photos(request):  # create a view that allows you to upload multiple photos at once
+    # use the formset_factory method to create and generate a class that will be our FormSet
+    PhotoFormSet = formset_factory(PhotoForm, extra=5)  # extra=5 == the number of instances
+    formset = PhotoFormSet()  # we instantiate the class
+
+    # Take a look at « request.method » and « request.POST »
+    print('La méthode de requête est : ', request.method)
+    print('Les données POST sont : ', request.POST)
+    print('Les données login : ', request.user)
+    print('Les données Media : ', request.FILES)
+
+    if request.method == 'POST':
+
+        formset = PhotoFormSet(request.POST, request.FILES)
+
+        if formset.is_valid():
+            for form in formset:  # iterate through each form in Formset
+                # for each Formset form, we will check if there is data in it
+                # (because even if the form is valid, one or more forms are empty, they must be ignored)
+                if form.cleaned_data:  # This allows you to check the current form, we have data that is not empty
+                    # and in this case, we can manage it
+                    photo = form.save(commit=False)
+                    photo.uploader = request.user  # assign the uploader field to the request user
+                    photo.save()  # we will save the photo
+
+            return redirect('home')  # outside the loop we will return the redirection to the home page
+
+    return render(request, 'blog/create_multiple_photos.html', {'formset': formset})
