@@ -120,9 +120,9 @@ def edit_delete_blog(request, blog_id):
 
             if 'confirm' in request.POST:
                 # Create an instance of our form and fill it with the POST data
-                delete_form = DeleteBlogForm(request.POST)  # ??? no need
+                delete_form = DeleteBlogForm(request.POST)  # ??? no need this
 
-                if delete_form.is_valid():  # ??? no need
+                if delete_form.is_valid():  # ??? no need this
                     # delete the blog object in the database
                     blog.delete()
                     # redirect to the list-page of the blog we just verified if existing it
