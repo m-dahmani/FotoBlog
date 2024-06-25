@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import formset_factory
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import PhotoForm, BlogForm, DeleteBlogForm
 from .models import Photo, Blog
@@ -19,12 +19,19 @@ from .models import Photo, Blog
 # the function-based connection view
 @login_required  # Restrict access to the home page and by default setting.LOGIN_URL = 'login'
 def home(request):
+    # Take a look at « request.user»  »
+    user = request.user
+    print(user.get_all_permissions())  # Return the user permissions
+    print(user.has_perm('blog.add_photo'))  # Return True for the creators False for the subscribers
+    print(user.has_perm('blog.add_blog'))   # Return True for the creators False for the subscribers
+
     photos = Photo.objects.all()  # recover photos that have been loaded
     blogs = Blog.objects.all()  # recover the instances(Blog) in the home page
     return render(request, 'blog/home.html', {'photos': photos, 'blogs': blogs})
 
 
 @login_required  # Restrict access to the user connected
+@permission_required('blog.add_photo', raise_exception=True)  # to limit access based on permission
 def photo_upload(request):
     # Take a look at « request.method » and « request.POST »
     print('La méthode de requête est : ', request.method)
@@ -49,6 +56,7 @@ def photo_upload(request):
 
 
 @login_required  # Restrict access to the user connected
+@permission_required(['blog.add_photo', 'blog.add_blog'], raise_exception=True)  # to limit access based on permission
 def blog_and_photo_upload(request):
     # Take a look at « request.method » and « request.POST »
     print('La méthode de requête est : ', request.method)
@@ -94,6 +102,7 @@ def blog_view_detail(request, blog_id):
 
 
 @login_required
+@permission_required(['blog.change_blog', 'change_blog_title'], raise_exception=True)
 def edit_delete_blog(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
 
@@ -181,6 +190,7 @@ def edit_delete_blog(request, blog_id):
 
 
 @login_required
+@permission_required('blog.add_photo', raise_exception=True)  # to limit access based on permission
 def create_multiple_photos(request):  # create a view that allows you to upload multiple photos at once
     # use the formset_factory method to create and generate a class that will be our FormSet
     PhotoFormSet = formset_factory(PhotoForm, extra=5)  # extra=5 == the number of instances

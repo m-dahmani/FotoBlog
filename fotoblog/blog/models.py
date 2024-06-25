@@ -65,6 +65,12 @@ class Blog(models.Model):
         # before calling the save() method of the parent class.
         super().save(*args, **kwargs)
 
+    class Meta:
+        # Specify custom permissions by configuring the permissions attribute in a Meta class of a model
+        permissions = [
+            ('change_blog_title', 'Can change the title of a blog post')
+        ]
+
     # We are going to add some information to the model, in particular a Meta class which will allow us
     # to modify the default display order of articles in the administration interface
     # as well as the displayed name (by default, the interface would display the model name, therefore(donc) Blog)
