@@ -5,7 +5,9 @@
     <p>{{ blog.photo.caption }}</p>
     <p>{{ blog.content }}</p>
 
-<a href="{% url 'update-delete-blog' blog.id %}">[Edit | Delete a blog post]</a>
+    {% if perms.blog.change_blog %}
+        <a href="{% url 'update-delete-blog' blog.id %}">[Edit | Delete a blog post]</a>
+    {% endif %}
 
 {% endblock content %}
 
