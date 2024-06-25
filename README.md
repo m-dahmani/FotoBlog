@@ -7,3 +7,22 @@ This content should then be shared in a social feed, and subscribers should be a
 Our project includes two applications: 
 one, called authentication, which will manage authentication and accounts, 
 and the other, blog, which will host our logic for sharing blog posts and photos.
+
+# Envirements :
+→ git clone git@github.com:m-dahmani/FotoBlog.git
+→ python3 -m venv env
+→ source env/bin/activate
+→ pip install -r requirements.txt 
+→ python manage.py showmigrations
+→ python manage.py migrate
+→ python manage.py createsuperuser
+Username: admin
+Email address: 
+Password: 
+Password (again): 
+Password must contain a number
+Bypass password validation and create user anyway? [y/N]: y
+Superuser created successfully.
+
+
+→ python manage.py runserver 0.0.0.0:8000
