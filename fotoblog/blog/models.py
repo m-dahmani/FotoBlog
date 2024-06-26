@@ -46,13 +46,20 @@ class Blog(models.Model):
     title = models.CharField(max_length=128)
     # slug = models.SlugField(max_length=255, unique=True, blank=True)
     content = models.CharField(max_length=5000)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # remove the author field from Blog we will have several contributors
+    # author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)  # remove after migration
     date_created = models.DateTimeField(auto_now_add=True)
     # last_updated = models.DateTimeField(auto_now=True)
     # published = models.BooleanField(default=False, verbose_name="Publié")
     starred = models.BooleanField(default=False)
     # Create a new word_count field on the Blog model. You can set null=True to avoid having to provide a default value.
     word_count = models.fields.IntegerField(null=True, blank=True)
+
+    # Authorize a Blog model instead of having a single author we will have several contributors
+    # Add & Update a M2M to Blog and tell it to use the intermediate table via through
+    # access all Blog instances having the User as a contributor using user.contributions instead
+    contributors = models.ManyToManyField(settings.AUTH_USER_MODEL, through='BlogContributor',
+                                          related_name='contributions')
 
     def _get_word_count(self):
         """Add a new _get_word_count() method to the Blog model,
@@ -102,3 +109,26 @@ class Blog(models.Model):
 def delete_image_file(sender, instance, **kwargs):
     if instance.image:
         instance.image.delete(False)
+
+
+class BlogContributor(models.Model):
+    """The intermediate table requires two ForeignKey to the two models involved in the ManyToMany relationship"""
+    # a relationship to the User
+    contributor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # a relationship to the Blog
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    # to store information about contributions specific to each author
+    contribution = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        # to ensure that there is only one BlogContributor instance for each contributor pair
+        unique_together = ('contributor', 'blog')
+
+
+
+
+
+
+
+
+

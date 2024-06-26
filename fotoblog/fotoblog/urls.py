@@ -51,9 +51,13 @@ urlpatterns = [
     path('blog/<int:blog_id>/', blog.views.blog_view_detail, name='blog-view-detail'),
     path('blog/<int:blog_id>/update|delete', blog.views.edit_delete_blog, name='update-delete-blog'),
 
+    path('follow_users/', blog.views.follow_users, name='follow-users'),
+
+
     path('profile/upload/', authentication.views.upload_profile_photo, name='profile-upload'),
     path('logout/', authentication.views.logout_user, name='logout'),
     path('signup/', authentication.views.signup_page, name='signup'),
+
 
     path("password_change/", PasswordChangeView.as_view(
         template_name='authentication/password_change_form.html'),

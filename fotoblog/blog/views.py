@@ -3,7 +3,7 @@ from django.forms import formset_factory
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PhotoForm, BlogForm, DeleteBlogForm
+from .forms import PhotoForm, BlogForm, DeleteBlogForm, FollowUsersForm
 from .models import Photo, Blog
 
 
@@ -76,10 +76,14 @@ def blog_and_photo_upload(request):
             photo.save()  # save the photo in the DB
 
             blog = blog_form.save(commit=False)  # to not save the object in the database with commit=False
-            blog.author = request.user  # assign a user connected to the author : put the user connected
+            # blog.author = request.user  # assign a user connected to the author : put the user connected
             blog.photo = photo  # assign a photo to the photo field : fill the photo field to object Blog
-            blog.save()  # save the blog in the DB
-
+            blog.save()  # # save the blog in the DB
+            # store the relationships in the ManyToManyField after the model has been saved
+            # add the user connected as a contributor once the blog instance is saved
+            # use the add method to create the ManyToMany relationship
+            # specify the contents of additional fields with the argument through_defaults
+            blog.contributors.add(request.user, through_defaults={'contribution': 'Auteur principal'})
             return redirect('home')
 
     else:
@@ -219,3 +223,26 @@ def create_multiple_photos(request):  # create a view that allows you to upload 
             return redirect('home')  # outside the loop we will return the redirection to the home page
 
     return render(request, 'blog/create_multiple_photos.html', {'formset': formset})
+
+
+@login_required
+def follow_users(request):
+
+    # Take a look at « request.user»  »
+    print('Les données login : ', request.user)
+    user = request.user
+    print(user.get_all_permissions())  # Return the user permissions
+    print(user.has_perm('blog.add_photo'))  # Return True for the creators False for the subscribers
+    print(user.has_perm('blog.add_blog'))  # Return True for the creators False for the subscribers
+
+    print('La méthode de requête est : ', request.method)
+    print('Les données POST sont : ', request.POST)
+
+    if request.method == 'POST':
+        form = FollowUsersForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = FollowUsersForm(instance=request.user)
+    return render(request, 'blog/follow_users_form.html', context={'form': form})

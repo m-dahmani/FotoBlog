@@ -11,10 +11,16 @@ class PhotoAdmin(admin.ModelAdmin):
 
 
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('title', 'photo', 'content', 'author', 'date_created', 'starred', 'word_count')
+    # list_display = ('title', 'photo', 'content', 'author', 'date_created', 'starred', 'word_count')
+    list_display = ('title', 'photo', 'content', 'date_created', 'starred', 'word_count')
     search_fields = ['title', 'content']
     list_editable = ("starred",)
     # prepopulated_fields = {'slug': ('title',)}
+
+    # ManyToManyField dans la liste list_display
+    # def display_contributors(self, obj):
+    #     return ", ".join(contributor for contributor in obj.contributors.all())
+    # display_contributors.short_description = 'Contributors'
 
 
 admin.site.register(Photo, PhotoAdmin)

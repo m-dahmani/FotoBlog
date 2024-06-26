@@ -15,6 +15,13 @@ class User(AbstractUser):  # we want to include all functionality of the User cl
     profile_photo = models.ImageField(verbose_name='Profile picture')
     role = models.CharField(choices=ROLE_CHOICES, max_length=30, verbose_name='Role')
 
+    follows = models.ManyToManyField(
+        'self',  # the model with which is linked to the same User model which we refer to with 'self'
+        limit_choices_to={'role': CREATOR},  # limit which users can be tracked and with the CREATOR role can be tracked
+        symmetrical=False,  # there is a difference between the two actors in the relationship One user follows another
+        # verbose_name='suit',
+    )
+
     def save(self, *args, **kwargs):
         """
         Update User's save() method to add the user to the correct group
@@ -25,7 +32,8 @@ class User(AbstractUser):  # we want to include all functionality of the User cl
         Automatic assignment of new users: Each time a new user is created and saved,
         they will automatically be added to the group corresponding to their role.
         Changing the role of existing users:
-        If the role of an existing user is changed, the user will be added to the corresponding new group."""
+        If the role of an existing user is changed, the user will be added to the corresponding new group.
+        """
         super().save(*args, **kwargs)
         # to override the save method in order to add new users assigned to groups automatically after migration
         if self.role == 'CREATOR':
