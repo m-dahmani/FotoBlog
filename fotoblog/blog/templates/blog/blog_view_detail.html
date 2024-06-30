@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
     <h2>{{ blog.title }}</h2>
-    <img src="{{ blog.photo.image.url }}">
-    <p>{{ blog.photo.caption }}</p>
-    <p>{{ blog.content }}</p>
+    <div>
+        <img src="{{ blog.photo.image.url }}">
+        <p>{{ blog.photo.caption }}</p>
+
+    <!--    <p>{{ blog.content }}</p> Division into Paragraphs or Sentences-->
+        <div class="blog-content">
+            {% for paragraph in content_paragraphs %}
+                <p>{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+    </div>
 
     {% if perms.blog.change_blog %}
         <a href="{% url 'update-delete-blog' blog.id %}">[Edit | Delete a blog post]</a>

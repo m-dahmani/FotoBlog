@@ -56,3 +56,23 @@ html {
     width: 50%;
     border-radius: 5px;
 }
+
+/* Make sure to include this CSS in your main CSS file */
+.blog-content {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 20px 0;
+}
+
+.blog-content p {
+    margin-bottom: 15px;
+}
+
+/*
+.blog-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+*/
