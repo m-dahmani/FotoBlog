@@ -27,9 +27,10 @@ def home(request):
     print(user.get_all_permissions())  # Return the user permissions
     print(user.has_perm('blog.add_photo'))  # Return True for the creators False for the subscribers
     print(user.has_perm('blog.add_blog'))   # Return True for the creators False for the subscribers
+    print(user.has_perm('blog.change_blog_title'))   # Return True for the subscribers & khalil False for the creators
 
-    print(user)
-    print('Récupérer les blogs qui ont des contributeurs suivis par l utilisateur : ', user.follows.all())
+    print('user : ', user)
+    print(f"Récupérer les blogs qui ont des contributeurs suivis par l'utilisateur : {user}, contributeur est : {user.follows.all()}")
 
     # photos = Photo.objects.all()  # recover photos that have been loaded
     # blogs = Blog.objects.all()  # recover the instances(Blog) in the home page
@@ -72,8 +73,9 @@ def photo_feed(request):
     print(user.has_perm('blog.add_photo'))  # Return True for the creators False for the subscribers
     print(user.has_perm('blog.add_blog'))   # Return True for the creators False for the subscribers
 
-    print(user)
-    print('Récupérer les photos qui ont des uploader suivis par l utilisateur classer par la plus récente: ', user.follows.all())
+    print('user : ', user)
+    print(f"Récupérer les photos qui ont des uploader suivis par l utilisateur : {user}, contributeur est : "
+          f"{user.follows.all()} classer par la plus récente")
     # Les uploader de photo font partie des utilisateurs suivis par l'utilisateur actuel (user.follows.all())
     # Récupérer les photos des uploader auxquels l’utilisateur connecté est abonné
     # les photos dont l’un des uploader est dans user.follows The Photo.uploader field must be an user who is followed
@@ -154,12 +156,21 @@ def blog_and_photo_upload(request):
 def blog_view_detail(request, blog_id):
     # to recover the blog(obj) and handle the case where the object does not exist.
     blog = get_object_or_404(Blog, id=blog_id)
-    context = {'blog': blog}
+
+    # divide content into paragraphs in view
+    # content = models.TextField()  # Using TextField instead content = models.CharField(max_length=5000)
+    # content_paragraphs = blog.content.split('\n')
+
+    # Divide content into sentences in view
+    content_paragraphs = [sentence.strip() for sentence in blog.content.split('.') if sentence]
+
+    context = {'blog': blog, 'content_paragraphs': content_paragraphs}
     return render(request, 'blog/blog_view_detail.html', context)
 
 
 @login_required
-@permission_required(['blog.change_blog', 'change_blog_title'], raise_exception=True)
+# @permission_required(['blog.change_blog', 'blog.change_blog_title'], raise_exception=True)
+@permission_required(['blog.change_blog'], raise_exception=True) # give the permission
 def edit_delete_blog(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
 
