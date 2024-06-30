@@ -1,3 +1,6 @@
+from itertools import chain
+from django.db.models import Q
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import formset_factory
 from django.views.generic import TemplateView
@@ -25,9 +28,59 @@ def home(request):
     print(user.has_perm('blog.add_photo'))  # Return True for the creators False for the subscribers
     print(user.has_perm('blog.add_blog'))   # Return True for the creators False for the subscribers
 
-    photos = Photo.objects.all()  # recover photos that have been loaded
-    blogs = Blog.objects.all()  # recover the instances(Blog) in the home page
-    return render(request, 'blog/home.html', {'photos': photos, 'blogs': blogs})
+    print(user)
+    print('Récupérer les blogs qui ont des contributeurs suivis par l utilisateur : ', user.follows.all())
+
+    # photos = Photo.objects.all()  # recover photos that have been loaded
+    # blogs = Blog.objects.all()  # recover the instances(Blog) in the home page
+    # context = {'photos': photos, 'blogs': blogs}
+
+    # Enchaîner les recherches inclure uniquement les photos apparaissant dans un blog écrit par khalil
+    # print('Récupérer uniquement les photos apparaissant dans un blog écrit par khalil : ',
+    #       Photo.objects.filter(blog__contributors__first_name='khalil'))
+    # QuerySet identique ~Q(starred=False) == Q(starred=True)
+
+    # Les contributeurs du blog (contributors) font partie des utilisateurs suivis
+    # par l'utilisateur actuel (user.follows.all()). AND Le blog est marqué comme étoilé (starred=True).
+    # blogs = Blog.objects.filter(contributors__in=request.user.follows.all(), starred=True)
+    # blogs = blogs.order_by('-date_created')  # classer un QuerySet d’un seul type de modèle - == reverse=True
+
+    # Récupérer les blogs des créateurs auxquels l’utilisateur connecté est abonné
+    # les blogs dont l’un des contributors est dans user.follows ou dont starred est True
+    # En d'autres termes, cette requête retourne tous les blogs qui soit ont des contributeurs suivis par l'utilisateur,
+    # soit sont marqués comme étoilés, soit les deux.
+    blogs = Blog.objects.filter(Q(contributors__in=request.user.follows.all()) | Q(starred=True))
+    # The Photo.uploader field must be a user who is followed.
+    # Exclude photos that are already linked to Blog instances exclude(blog__in=blogs)
+    # Specify the ForeignKey relationship to Inverse Photo by querying the model name in lowercase blog__in
+    photos = Photo.objects.filter(uploader__in=request.user.follows.all()).exclude(blog__in=blogs)
+
+    blogs_and_photos = sorted(chain(blogs, photos), key=lambda instance: instance.date_created, reverse=True)
+
+    # context = {'photos': photos, 'blogs': blogs}
+    context = {
+        'blogs_and_photos': blogs_and_photos,
+    }
+    return render(request, 'blog/home.html', context)
+
+
+@login_required  # Restrict access to the home page and by default setting.LOGIN_URL = 'login'
+def photo_feed(request):
+    # Take a look at « request.user»  »
+    user = request.user
+    print(user.get_all_permissions())  # Return the user permissions
+    print(user.has_perm('blog.add_photo'))  # Return True for the creators False for the subscribers
+    print(user.has_perm('blog.add_blog'))   # Return True for the creators False for the subscribers
+
+    print(user)
+    print('Récupérer les photos qui ont des uploader suivis par l utilisateur classer par la plus récente: ', user.follows.all())
+    # Les uploader de photo font partie des utilisateurs suivis par l'utilisateur actuel (user.follows.all())
+    # Récupérer les photos des uploader auxquels l’utilisateur connecté est abonné
+    # les photos dont l’un des uploader est dans user.follows The Photo.uploader field must be an user who is followed
+    photos = Photo.objects.filter(uploader__in=request.user.follows.all()).order_by('-date_created')
+
+    context = {'photos': photos}
+    return render(request, 'blog/photo_feed.html', context)
 
 
 @login_required  # Restrict access to the user connected

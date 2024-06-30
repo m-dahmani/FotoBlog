@@ -31,6 +31,7 @@ def create_groups(apps, schema_migration):
     # Assign permissions to the creators groups
     creators.permissions.set(creator_permissions)
     # The set() function on a field of type ManyToManyField expects a list of objects
+    # The set method replaces all current permissions in the group with the specified ones
 
     # Create the subscribers groups
     subscribers = Group(name='subscribers')
@@ -38,6 +39,7 @@ def create_groups(apps, schema_migration):
     # Assign permissions to the subscribers groups
     subscribers.permissions.add(view_photo)
     # The add() method on a ManyToManyField does not take a list as an argument, but the individual objects
+    # The add method would add permissions to those already present
 
     # Assign existing users to the appropriate groups during migration
     users = User.objects.all()

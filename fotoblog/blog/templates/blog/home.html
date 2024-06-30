@@ -4,21 +4,27 @@
 <!--    <h1>Hello, {{ user.username }} !</h1>-->
     <h2>Photos</h2>
     <div class="grid-container">
-        {% for photo in photos %}
+        {% for photo in blogs_and_photos %}
             <div class="post">
-                <img src="{{ photo.image.url }}">
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}">
                 <p>{{ photo.caption }}</p>
+                {% if photo.image.url %}
+                    <p>Uploaded by: {{ photo.uploader.username }}</p>
+                    <p>Created on: {{ photo.date_created }}</p>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
 
     <h2>Blogs</h2>
     <div class="grid-container">
-        {% for blog in blogs %}
+        {% for blog in blogs_and_photos %}
             <div class="post">
                 <a href="{% url 'blog-view-detail' blog.id %}">
                     <h4>Blog post : {{ blog.title }}</h4>
-                    <img src="{{ blog.photo.image.url }}">
+                    <img src="{{ blog.photo.image.url }}" alt="{{ photo.caption }}">
+                    <p>Uploaded by: {{ blog.photo.uploader.username }}</p>
+                    <p>Created on: {{ blog.photo.date_created }}</p>
                 </a>
             </div>
         {% endfor %}

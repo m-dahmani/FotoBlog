@@ -40,6 +40,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', authentication.views.login_page, name='login'),  # the function-based connection view
     path('home/', blog.views.home, name='home'),
+    path('photo_feed/', blog.views.photo_feed, name='photo-feed'),
     path('photo/upload/', blog.views.photo_upload, name='photo-upload'),
     path('photo/upload-multiple/', blog.views.create_multiple_photos, name='photo-upload-multiple'),
 

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Photo Feed</h2>
+    <div class="grid-container">
+        {% for photo in photos %}
+            <div class="post">
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}">
+                <p>{{ photo.caption }}</p>
+                <p>Uploaded by: {{ photo.uploader.username }}</p>
+                <p>Created on: {{ photo.date_created }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
