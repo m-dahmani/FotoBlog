@@ -1,3 +1,4 @@
+import bleach
 from PIL import Image
 from django.conf import settings
 from django.db import models
@@ -69,6 +70,16 @@ class Blog(models.Model):
     def save(self, *args, **kwargs):
         # to override & Update the save method to assign to word_count the result of _get_word_count()
         self.word_count = self._get_word_count()
+        # For extra security, you can use libraries like bleach in Python to clean HTML content before saving it to  database
+        # This helps eliminate any potentially dangerous HTML before saving it to your database, ensuring that the use of |safe in your templates is safe.
+        # When saving content  Cleaning content before saving it
+        # You can also customize bleach's behavior to allow certain HTML tags and attributes if necessary:
+        allowed_tags = ['b', 'i', 'u', 'a', 'p', 'br']  # List of authorized HTML tags
+        allowed_attrs = {'a': ['href', 'title']}  # List of allowed HTML attributes
+
+        clean_content = bleach.clean(self.content, tags=allowed_tags, attributes=allowed_attrs)
+        self.content = clean_content
+
         # before calling the save() method of the parent class.
         super().save(*args, **kwargs)
 
