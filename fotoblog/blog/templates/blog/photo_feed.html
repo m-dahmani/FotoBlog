@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
+{% load custom_filters custom_tags %}
 {% block content %}
     <h2>Photo Feed</h2>
     <div class="grid-container">
         {% for photo in photos %}
-            <div class="post">
-                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}">
-                <p>{{ photo.caption }}</p>
-                <p>Uploaded by: {{ photo.uploader.username }}</p>
-                <p>Created on: {{ photo.date_created }}</p>
-            </div>
+            {% include 'blog/partials/photo_snippet.html' %}
         {% endfor %}
     </div>
 {% endblock content %}

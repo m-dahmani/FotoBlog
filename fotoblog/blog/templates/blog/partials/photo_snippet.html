@@ -1,0 +1,10 @@
+{% load custom_filters custom_tags %}
+<div class="post">
+    <img src="{{ photo.image.url }}" alt="{{ photo.caption }}">
+    <p>{{ photo.caption }}</p>
+<!--    {% if photo.image.url %}-->
+<!--        <p>Uploaded by: {{ photo.uploader }}</p>-->
+    <p><strong>Taken by: {% get_poster_display photo.uploader %}</strong></p>
+    <p>{{ photo.date_created|get_posted_at_display }}</p>
+<!--    {% endif %}-->
+</div>

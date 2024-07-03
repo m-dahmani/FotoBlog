@@ -1,0 +1,11 @@
+{% load custom_filters custom_tags %}
+<div class="post">
+    <a href="{% url 'blog-view-detail' instance.id %}">
+        <h4>Blog post : {{ blog.title }}</h4>
+        <img src="{{ blog.photo.image.url }}" alt="{{ blog.photo.caption }}">
+<!--                        <p>Written by: {{ instance.photo.uploader.username }}</p>-->
+        <p><strong>Written by: {{ blog.contributors.all|join:", " }}</strong></p>
+<!--                        <p>Created on: {{ instance.date_created }}</p>-->
+        <p>Created on: {% current_time "%Y-%m-%d %H:%M" %}</p>
+    </a>
+</div>
