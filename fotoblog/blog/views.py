@@ -1,4 +1,6 @@
 from itertools import chain
+
+from django.core.paginator import Paginator
 from django.db.models import Q
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -58,9 +60,23 @@ def home(request):
 
     blogs_and_photos = sorted(chain(blogs, photos), key=lambda instance: instance.date_created, reverse=True)
 
-    # context = {'photos': photos, 'blogs': blogs}
+    # Vous pouvez fournir n’importe quel itérable (c’est-à-dire une liste ou un QuerySet) à Paginator
+    paginator = Paginator(blogs_and_photos, 3)  # 6 == le nbre d'instance)
+
+    # l’URL https://fotoblog.com?page=5 key=page value=5.
+    # GET /fotoblog.com?page=5  {'page': ['5'],}
+
+    # Accéder query_string dans la vue via l’objet  request.GET vous obtiendrez 5.
+    page_number = request.GET.get('page')
+
+    # Utiliser la méthode Paginator.get_page pour obtenir un objet représentant la page sur laquelle vous êtes.
+    # Renvoie une page valide, même si l'argument de la page n'est pas un nombre ou n'est pas compris dans la plage.
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'blogs_and_photos': blogs_and_photos,
+        # 'photos': photos, 'blogs': blogs,
+        # 'blogs_and_photos': blogs_and_photos,
+        'page_obj': page_obj,
     }
     return render(request, 'blog/home.html', context)
 
@@ -81,7 +97,25 @@ def photo_feed(request):
     # les photos dont l’un des uploader est dans user.follows The Photo.uploader field must be an user who is followed
     photos = Photo.objects.filter(uploader__in=request.user.follows.all()).order_by('-date_created')
 
-    context = {'photos': photos}
+    # Vous pouvez fournir n’importe quel itérable (c’est-à-dire une liste ou un QuerySet) à Paginator
+    # créer une instance du Paginator
+    paginator = Paginator(photos, 3)  # 6 == le nbre d'instance) # 6 photos par page
+
+    # l’URL https://fotoblog.com?page=5 key=page value=5.
+    # GET /fotoblog.com?page=5  {'page': ['5'],}
+
+    # Accéder query_string dans la vue via l’objet  request.GET vous obtiendrez 5.
+    page_number = request.GET.get('page')
+
+    # Utiliser la méthode Paginator.get_page pour obtenir un objet représentant la page sur laquelle vous êtes.
+    # Renvoie une page valide, même si l'argument de la page n'est pas un nombre ou n'est pas compris dans la plage.
+    page_obj = paginator.get_page(page_number)
+
+    # inclure l’objet page_obj  dans le contexte
+    context = {
+        # 'photos': photos,
+        'page_obj': page_obj,
+    }
     return render(request, 'blog/photo_feed.html', context)
 
 

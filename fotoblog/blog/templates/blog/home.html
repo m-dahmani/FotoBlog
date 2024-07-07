@@ -5,14 +5,17 @@
 <!--    <h1>Hello, {{ user.username }} !</h1>-->
     <h2>Your Feed</h2>
     <div class="grid-container">
-        {% for instance in blogs_and_photos %}
+<!--        MAJ que d’itérer dans la liste d’origine blogs_and_photos -->
+        {% for instance in page_obj %}
             {% if instance|model_type == 'Blog' %}
                 {% include 'blog/partials/blog_snippet.html' with blog=instance %}
 
             {% elif instance|model_type == 'Photo' %}
                 {% include 'blog/partials/photo_snippet.html' with photo=instance %}
+
             {% endif %}
         {% endfor %}
     </div>
+    {% include 'blog/partials/pagination.html' %}
 {% endblock content %}
 

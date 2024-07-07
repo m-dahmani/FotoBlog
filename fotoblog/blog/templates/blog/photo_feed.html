@@ -3,8 +3,9 @@
 {% block content %}
     <h2>Photo Feed</h2>
     <div class="grid-container">
-        {% for photo in photos %}
+        {% for photo in page_obj %}
             {% include 'blog/partials/photo_snippet.html' %}
         {% endfor %}
     </div>
+    {% include 'blog/partials/pagination.html' %}
 {% endblock content %}
